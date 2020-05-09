@@ -14,3 +14,8 @@ std::string Node::getLabel() {
 void Node::setLabel(string label) {
     this->label = label;
 }
+
+ostream &operator<<(ostream &out, Node &v) {
+    out << "Node " << v.getLabel();
+    return out;
+}

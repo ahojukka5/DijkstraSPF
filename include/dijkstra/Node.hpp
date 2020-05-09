@@ -27,4 +27,5 @@ class Node {
      */
     void setLabel(std::string label);
 
+    friend std::ostream &operator<<(std::ostream &out, Node &v);
 };
