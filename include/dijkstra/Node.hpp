@@ -15,17 +15,26 @@ class Node {
     /**
      * Constructor for a new node.
      */
-    Node(std::string label);
+    Node(std::string label) {
+        this->label = label;
+    }
 
     /**
      * Return the label of the node.
      */
-    std::string getLabel();
+    std::string getLabel() {
+        return label;
+    }
 
     /**
      * Set the label of the node.
      */
-    void setLabel(std::string label);
+    void setLabel(std::string label) {
+        this->label = label;
+    }
 
-    friend std::ostream &operator<<(std::ostream &out, Node &v);
+    friend std::ostream &operator<<(std::ostream &out, Node &v) {
+        out << "Node " << v.getLabel();
+        return out;
+    }
 };

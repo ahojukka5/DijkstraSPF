@@ -10,11 +10,23 @@ class Edge {
     Node *a, *b;
 
   public:
-    Edge(Node &a, Node &b);
+    Edge(Node &a, Node &b) {
+        this->a = &a;
+        this->b = &b;
+    }
 
-    Node getA();
+    Node getA() {
+        return *a;
+    }
 
-    Node getB();
+    Node getB() {
+        return *b;
+    }
 
-    friend std::ostream &operator<<(std::ostream &out, Edge &edge);
+    friend std::ostream &operator<<(std::ostream &out, Edge &edge) {
+        std::string lbl1 = edge.getA().getLabel();
+        std::string lbl2 = edge.getB().getLabel();
+        out << "Edge from " << lbl1 << " to " << lbl2;
+        return out;
+    }
 };
