@@ -1,83 +1,161 @@
 #include <iostream>
+#include <map>
 #include <random>
+#include <set>
+#include <tuple>
 #include <vector>
 
 using namespace std;
 
+// random_device rd;
+// default_random_engine e2(rd());
+// uniform_real_distribution<> dist(0.0, 1.0);
+
 /**
- * Generate a random graph with N vertices and edge density d.
- *
- * Density of the graph is given as a real value between 0 ... 1, where 0
- * denotes for an empty graph and 1 is a complete graph, where all nodes are
- * connected with each other.
- *
- * @param N is the number of vertices in generated graph
- * @param d is the density of the graph
- * @return 2d boolean array representation of graph (adjacency matrix)
+ * A simple class to represent graph.
  */
-bool **random_graph(int N, double d) {
-    cout << "Generate random graph of size " << N << " and density " << d
-         << endl;
+class Graph {
 
-    random_device rd;
-    default_random_engine e2(rd());
-    uniform_real_distribution<> dist(0.0, 1.0);
+  private:
+    map<tuple<int, int>, int> weights;
+    map<int, vector<int>> adj;
 
-    bool **graph = new bool *[N];
-    for (int i = 0; i < N; i++) {
-        graph[i] = new bool[N];
+  public:
+    /**
+     * Add new edge (u, v) to graph with weight w.
+     */
+    void add_edge(int u, int v, int w) {
+        auto e = make_tuple(u, v);
+        weights[e] = w;
+        if (!adj.count(u)) {
+            adj[u] = vector<int>();
+        }
+        adj[u].push_back(v);
     }
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            if (i == j) {
-                graph[i][j] = false;
-            } else {
-                double rval = dist(e2);
-                if (rval <= d) {
-                    graph[i][j] = true;
-                } else {
-                    graph[i][j] = false;
+
+    /**
+     * Return adjacency list for vertex u.
+     */
+    auto get_adj(int u) {
+        return adj[u];
+    }
+
+    /**
+     * Return weight for edge e.
+     */
+    auto get_weight(int u, int v) {
+        return weights[make_tuple(u, v)];
+    }
+};
+
+/**
+ * Dijsktra's shortest path algorithm.
+ */
+class Dijkstra {
+  private:
+    map<int, int> dist, prev;
+    set<int> queue, visited;
+
+    /**
+     * Return minimum from queue based on dist.
+     */
+    int min(set<int> queue, map<int, int> dist) {
+        int d = INT32_MAX;
+        int u = -1;
+        for (int v : queue) {
+            if (dist[v] < d) {
+                d = dist[v];
+                u = v;
+            }
+        }
+        return u;
+    }
+
+    /**
+     * Return true if node v is already visited.
+     */
+    bool is_visited(int v) {
+        return visited.count(v);
+    }
+
+    /**
+     * Get adjacent nodes of u in graph G.
+     */
+    auto get_adjacent(Graph G, int u) {
+        return G.get_adj(u);
+    }
+
+    /**
+     * Get weight between u and v in graph G.
+     */
+    int get_weight(Graph G, int u, int v) {
+        return G.get_weight(u, v);
+    }
+
+    /**
+     * Initialize algorithm to start from node s.
+     */
+    void initialize(int s) {
+        queue.clear();
+        dist.clear();
+        prev.clear();
+        queue.insert(s);
+        dist[s] = 0;
+        prev[s] = s;
+    }
+
+  public:
+    /**
+     * Run Dijkstra's algorithm to graph G starting from vertex s.
+     */
+    Dijkstra(Graph G, int s) {
+        initialize(s);
+        while (!queue.empty()) {
+            int u = min(queue, dist);
+            for (int v : get_adjacent(G, u)) {
+                if (is_visited(v)) {
+                    continue;
+                }
+                int tentative_distance = get_distance(u) + get_weight(G, u, v);
+                if (tentative_distance < get_distance(v)) {
+                    dist[v] = tentative_distance;
+                    prev[v] = u;
+                    queue.insert(v);
                 }
             }
+            queue.erase(u);
+            visited.insert(u);
         }
     }
-    return graph;
-}
 
-void print_graph(bool **graph, int N, bool print_zeros) {
-    bool *first_row = graph[0];
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            if (print_zeros || graph[i][j]) {
-                cout << graph[i][j];
-            }
-            if (j == N - 1) {
-                cout << endl;
-            } else {
-                cout << " ";
-            }
-        }
+    /**
+     * Return shortest path to node v.
+     */
+    int get_distance(int v) {
+        return dist.count(v) ? dist[v] : INT32_MAX;
     }
-}
-
-void print_graph_dot(bool **graph, int N) {
-    cout << "graph {" << endl;
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            if (graph[i][j] != false) {
-                cout << "    " << i << " -- " << j << ";" << endl;
-            }
-        }
-    }
-    cout << "}" << endl;
-}
+};
 
 int main(int argc, char *argv[]) {
     cout << "Welcome to Dijkstra's shortest path solver!" << std::endl;
-    int N = 10;
-    double d = 0.2;
-    bool **graph = random_graph(N, d);
-    // print_graph(graph, N, true);
-    // print_graph_dot(graph, N);
+    enum Nodes { S, T, A, B, C, D, E, F, G };
+    Graph graph;
+    graph.add_edge(S, A, 4);
+    graph.add_edge(S, B, 3);
+    graph.add_edge(S, D, 7);
+    graph.add_edge(A, C, 1);
+    graph.add_edge(B, S, 3);
+    graph.add_edge(B, D, 4);
+    graph.add_edge(C, E, 1);
+    graph.add_edge(C, D, 3);
+    graph.add_edge(D, E, 1);
+    graph.add_edge(D, T, 3);
+    graph.add_edge(D, F, 5);
+    graph.add_edge(E, G, 2);
+    graph.add_edge(G, E, 2);
+    graph.add_edge(G, T, 3);
+    graph.add_edge(T, F, 5);
+    Dijkstra solution = Dijkstra(graph, S);
+    cout << "Shortest path to T = " << solution.get_distance(T) << endl;
     return 0;
 }
