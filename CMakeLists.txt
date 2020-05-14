@@ -7,9 +7,4 @@ project(dijkstra
 
 include_directories( ./include ./src )
 
-add_executable(dijkstra ./apps/main.cpp )
-
-# find_package(GTest REQUIRED)
-# "Unit tests", TODO: use gtest, https://github.com/bast/gtest-demo
-add_executable(test_node ./test/test_node.cpp)
-add_executable(test_edge ./test/test_edge.cpp)
+add_executable(main ./apps/main.cpp )
