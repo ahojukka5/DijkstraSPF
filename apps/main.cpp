@@ -1,12 +1,12 @@
+#include <spf/graph.hpp>
+#include <spf/abstract_dijkstra.hpp>
+
 #include <iostream>
 #include <map>
 #include <random>
 #include <set>
 #include <tuple>
 #include <vector>
-
-#include <dijkstra/AbstractDijkstra.hpp>
-#include <dijkstra/Graph.hpp>
 
 using namespace std;
 
