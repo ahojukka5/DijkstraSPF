@@ -1,36 +1,13 @@
 #include <spf/graph.hpp>
-#include <spf/abstract_dijkstra.hpp>
+#include <spf/dijkstra.hpp>
 
 #include <iostream>
-#include <map>
-#include <random>
-#include <set>
-#include <tuple>
-#include <vector>
 
 using namespace std;
 
 // random_device rd;
 // default_random_engine e2(rd());
 // uniform_real_distribution<> dist(0.0, 1.0);
-
-class Dijkstra : public AbstractDijkstra<Graph> {
-  private:
-    /**
-     * Get adjacent nodes of u in graph G.
-     */
-    std::vector<int> get_adjacent(Graph &G, int u) {
-        return G.get_adj(u);
-    }
-
-    /**
-     * Get weight between u and v in graph G.
-     */
-    int get_weight(Graph &G, int u, int v) {
-        G.get_weight(u, v);
-    }
-
-};
 
 int main(int argc, char *argv[]) {
     cout << "Welcome to Dijkstra's shortest path solver!" << std::endl;
